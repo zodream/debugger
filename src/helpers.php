@@ -16,26 +16,26 @@ if (!function_exists('dd')) {
 
 if (!function_exists('dump')) {
     /**
-     * Zodream\Module\Debugger\Domain\Debugger::dump() shortcut.
+     * Zodream\Debugger\Domain\Debugger::dump() shortcut.
      * @tracySkipLocation
      * @param $var
      * @return mixed
      */
 	function dump($var) {
-		array_map('Zodream\Module\Debugger\Domain\Debugger::dump', func_get_args());
+		array_map('Zodream\Debugger\Domain\Debugger::dump', func_get_args());
 		return $var;
 	}
 }
 
 if (!function_exists('bdump')) {
     /**
-     * Zodream\Module\Debugger\Domain\Debugger::barDump() shortcut.
+     * Zodream\Debugger\Domain\Debugger::barDump() shortcut.
      * @tracySkipLocation
      * @param $var
      * @return mixed
      */
 	function bdump($var) {
-		call_user_func_array('Zodream\Module\Debugger\Domain\Debugger::barDump', func_get_args());
+		call_user_func_array('Zodream\Debugger\Domain\Debugger::barDump', func_get_args());
 		return $var;
 	}
 }

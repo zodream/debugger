@@ -1,5 +1,5 @@
 <?php
-namespace Zodream\Module\Debugger\Service;
+namespace Zodream\Debugger\Service;
 
 use Zodream\Service\Controller\ModuleController as BaseController;
 
