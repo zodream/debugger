@@ -22,20 +22,10 @@ if (!function_exists('dump')) {
      * @return mixed
      */
 	function dump($var) {
-		array_map('Zodream\Debugger\Domain\Debugger::dump', func_get_args());
+		array_map(function ($item) {
+		    return app('debugger')->dump($item);
+        }, func_get_args());
 		return $var;
 	}
 }
 
-if (!function_exists('bdump')) {
-    /**
-     * Zodream\Debugger\Domain\Debugger::barDump() shortcut.
-     * @tracySkipLocation
-     * @param $var
-     * @return mixed
-     */
-	function bdump($var) {
-		call_user_func_array('Zodream\Debugger\Domain\Debugger::barDump', func_get_args());
-		return $var;
-	}
-}

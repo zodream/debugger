@@ -2,6 +2,7 @@
 namespace Zodream\Debugger;
 
 use Exception;
+use Zodream\Debugger\Domain\Dumper;
 
 class Debugger {
 
@@ -52,11 +53,11 @@ class Debugger {
         if ($this->booted) {
             return;
         }
-        register_shutdown_function([$this, 'shutdownHandler']);
-        set_exception_handler([$this, 'exceptionHandler']);
-        set_error_handler([$this, 'errorHandler']);
-
-        $this->dispatch();
+//        register_shutdown_function([$this, 'shutdownHandler']);
+//        set_exception_handler([$this, 'exceptionHandler']);
+//        set_error_handler([$this, 'errorHandler']);
+//
+//        $this->dispatch();
         $this->booted = true;
     }
 
@@ -94,12 +95,37 @@ class Debugger {
 
     /**
      * Handler to catch warnings and notices.
-     * @return bool|null   false to call normal error handler, null otherwise
-     * @throws ErrorException
+     * @param $severity
+     * @param $message
+     * @param $file
+     * @param $line
+     * @param array $context
+     * @return void false to call normal error handler, null otherwise
      * @internal
      */
     public static function errorHandler($severity, $message, $file, $line, $context = []) {
 
+    }
+
+
+    public static function dump($var, $return = false) {
+        if ($return) {
+            ob_start(function () {});
+            Dumper::dump($var, [
+                Dumper::DEPTH => self::$maxDepth,
+                Dumper::TRUNCATE => self::$maxLength,
+            ]);
+            return ob_get_clean();
+
+        } elseif (!self::$productionMode) {
+            Dumper::dump($var, [
+                Dumper::DEPTH => self::$maxDepth,
+                Dumper::TRUNCATE => self::$maxLength,
+                Dumper::LOCATION => self::$showLocation,
+            ]);
+        }
+
+        return $var;
     }
 
 
