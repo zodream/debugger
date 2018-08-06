@@ -48,6 +48,20 @@ class Debugger {
         $this->boot();
     }
 
+    /**
+     * @return integer
+     */
+    public function getTime() {
+        return $this->time;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getUsedTime() {
+        return microtime(true) - $this->time;
+    }
+
 
 
     public function boot() {
