@@ -3,6 +3,7 @@ namespace Zodream\Debugger;
 
 use Exception;
 use Zodream\Debugger\Domain\Bar;
+use Zodream\Debugger\Domain\BlueScreen;
 use Zodream\Debugger\Domain\Dumper;
 
 class Debugger {
@@ -62,23 +63,41 @@ class Debugger {
         return microtime(true) - $this->time;
     }
 
+    /**
+     * @return array|null
+     */
+    public function getCpuUsage(): array {
+        return $this->cpuUsage;
+    }
+
+    public function getUsedCpuUsage(): array {
+        $data = [];
+        foreach (getrusage() as $key => $val) {
+            $data[$key] = $this->cpuUsage[$key] - $val;
+        }
+        return $data;
+    }
+
 
 
     public function boot() {
         if ($this->booted) {
             return;
         }
-//        register_shutdown_function([$this, 'shutdownHandler']);
-//        set_exception_handler([$this, 'exceptionHandler']);
-//        set_error_handler([$this, 'errorHandler']);
-//
-//        $this->dispatch();
+        register_shutdown_function([$this, 'shutdownHandler']);
+        set_exception_handler([$this, 'exceptionHandler']);
+        set_error_handler([$this, 'errorHandler']);
+
+        $this->dispatch();
         $this->registerAssets();
         $this->booted = true;
     }
 
     public function registerAssets() {
-        view()->registerJsFile('@debugger.js')
+        view()->registerJsFile('@jquery.min.js')
+            ->registerJsFile('@debugger.min.js')
+            ->registerCssFile('@font-awesome.min.css')
+            ->registerCssFile('@zodream.css')
             ->registerCssFile('@debugger.css');
     }
 
@@ -113,7 +132,7 @@ class Debugger {
         }
         if ($this->showBar && $this->isDebug) {
             $this->removeOutputBuffers(false);
-            (new Bar)->render();
+            echo (new Bar($this))->render();
         }
     }
 
@@ -126,7 +145,14 @@ class Debugger {
      * @internal
      */
     public function exceptionHandler($exception, $exit = true) {
-
+        if (!$this->reserved && $exit) {
+            return;
+        }
+        $this->reserved = null;
+        echo (new BlueScreen($this))->render($exception);
+        if ($exit) {
+            exit(255);
+        }
     }
 
 
@@ -140,8 +166,10 @@ class Debugger {
      * @return void false to call normal error handler, null otherwise
      * @internal
      */
-    public static function errorHandler($severity, $message, $file, $line, $context = []) {
-
+    public function errorHandler($severity, $message, $file, $line, $context = []) {
+        $e = new \ErrorException($message, 0, $severity, $file, $line);
+        $e->context = $context;
+        $this->exceptionHandler($e);
     }
 
     protected function removeOutputBuffers($errorOccurred) {
