@@ -2,6 +2,7 @@
 namespace Zodream\Debugger;
 
 use Exception;
+use Zodream\Debugger\Domain\Bar;
 use Zodream\Debugger\Domain\Dumper;
 
 class Debugger {
@@ -58,7 +59,13 @@ class Debugger {
 //        set_error_handler([$this, 'errorHandler']);
 //
 //        $this->dispatch();
+        $this->registerAssets();
         $this->booted = true;
+    }
+
+    public function registerAssets() {
+        view()->registerJsFile('@debugger.js')
+            ->registerCssFile('@debugger.css');
     }
 
     public function dispatch() {
@@ -77,7 +84,23 @@ class Debugger {
     }
 
     public function shutdownHandler() {
+        if (!$this->reserved) {
+            return;
+        }
+        $this->reserved = null;
 
+        $error = error_get_last();
+        if (in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE, E_RECOVERABLE_ERROR, E_USER_ERROR], true)) {
+//            self::exceptionHandler(
+//                Helpers::fixStack(new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line'])),
+//                false
+//            );
+            return;
+        }
+        if ($this->showBar && $this->isDebug) {
+            $this->removeOutputBuffers(false);
+            (new Bar)->render();
+        }
     }
 
 
@@ -107,26 +130,19 @@ class Debugger {
 
     }
 
-
-    public static function dump($var, $return = false) {
-        if ($return) {
-            ob_start(function () {});
-            Dumper::dump($var, [
-                Dumper::DEPTH => self::$maxDepth,
-                Dumper::TRUNCATE => self::$maxLength,
-            ]);
-            return ob_get_clean();
-
-        } elseif (!self::$productionMode) {
-            Dumper::dump($var, [
-                Dumper::DEPTH => self::$maxDepth,
-                Dumper::TRUNCATE => self::$maxLength,
-                Dumper::LOCATION => self::$showLocation,
-            ]);
+    protected function removeOutputBuffers($errorOccurred) {
+        while (ob_get_level() > $this->obLevel) {
+            $status = ob_get_status();
+            if (in_array($status['name'], ['ob_gzhandler', 'zlib output compression'], true)) {
+                break;
+            }
+            $fnc = $status['chunk_size'] || !$errorOccurred ? 'ob_end_flush' : 'ob_end_clean';
+            if (!@$fnc()) { // @ may be not removable
+                break;
+            }
         }
-
-        return $var;
     }
+
 
 
 }

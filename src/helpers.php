@@ -1,31 +1,22 @@
 <?php
 
+use Zodream\Debugger\Domain\Debug\Dumper;
 
-if (!function_exists('dd')) {
+
+if (! function_exists('dd')) {
     /**
      * Dump the passed variables and end the script.
      *
-     * @param  mixed
+     * @param  mixed  $args
      * @return void
      */
-    function dd() {
-        call_user_func_array('dump', func_get_args());
+    function dd(...$args) {
+        foreach ($args as $x) {
+            (new Dumper)->dump($x);
+        }
+
         die(1);
     }
 }
 
-if (!function_exists('dump')) {
-    /**
-     * Zodream\Debugger\Domain\Debugger::dump() shortcut.
-     * @tracySkipLocation
-     * @param $var
-     * @return mixed
-     */
-	function dump($var) {
-		array_map(function ($item) {
-		    return app('debugger')->dump($item);
-        }, func_get_args());
-		return $var;
-	}
-}
 
