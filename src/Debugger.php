@@ -85,8 +85,8 @@ class Debugger {
             return;
         }
         register_shutdown_function([$this, 'shutdownHandler']);
-//        set_exception_handler([$this, 'exceptionHandler']);
-//        set_error_handler([$this, 'errorHandler']);
+        set_exception_handler([$this, 'exceptionHandler']);
+        set_error_handler([$this, 'errorHandler']);
 
         $this->dispatch();
         $this->registerAssets();

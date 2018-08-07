@@ -73,6 +73,38 @@
         background: #CD1818;
         color: white;
         font-size: 13pt;
-        padding: 1px 25px;
+        padding: 30px 25px;
+    }
+    .panel {
+        position: relative;
+        background: #fff;
+        .panel-header {
+            line-height: 30px;
+            background: #af5d0d;
+            border-bottom: 1px solid #af5d0d;
+            padding: 0 25px;
+            color: #fff;
+            .name {
+                line-height: 30px;
+                font-size: 20px;
+            }
+        }
+        .panel-body {
+            display: none;
+            box-sizing: border-box;
+            padding: 0 25px;
+            border-bottom: 1px solid #f9cfa6;
+            .panel {
+                .panel-header {
+                    background: #f9cfa6;
+                    color: #333;
+                }
+            }
+        }
+        &.expanded {
+            >.panel-body {
+                display: block;
+            }
+        }
     }
 }

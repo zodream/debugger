@@ -31,10 +31,28 @@ class Debugger {
     /**
      * blueScreen
      */
-    public static blueScreen(header: DebuggerHeader): JQuery {
+    public static blueScreen(header: DebuggerHeader, data: Array<any>): JQuery {
         let box = Debugger.createElement('blue-screen');
-        let html = '<div class="bs-header"><p>'+header.name+'</p><h1><span>'+header.message+'</span><a href="" target="_blank" rel="noreferrer noopener">search►</a></h1></div>';
+        let html = '<div class="bs-header"><p>'+header.name+'</p><h1>'+header.message+'</h1></div>';
+        data.forEach(ex => {
+            html += '<div class="panel"><div class="panel-header"><p class="name">'+ex.name+': '+ex.message+'</p><p>'+ex.file+':'+ex.line+'</p></div><div class="panel-body">';
+            if (ex.trace) {
+                ex.trace.forEach(trace => {
+                    html += '<div class="panel"><div class="panel-header"><p class="name">'+
+                        (trace.class ? trace.class+trace.type : '')
+                        +trace.function+'('+trace.args.join(',')+')</p>';
+                    if (trace.file) {
+                        html += '<p>'+trace.file+':'+trace.line+'</p>';
+                    }
+                    html +='</div><div class="panel-body">'+trace.source+'</div></div>';
+                });
+            }
+            html += '</div></div>';
+        });
         box.html(html);
+        box.on('click', '.panel .panel-header', function() {
+            $(this).closest('.panel').toggleClass('expanded');
+        });
         return box;
     }
 }
