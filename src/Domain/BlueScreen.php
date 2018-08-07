@@ -7,12 +7,13 @@ class BlueScreen extends BaseBox {
     public function render($exception) {
         $info = json_encode($this->getInfo($exception));
         $html = view()->header().view()->footer();
+        $exceptions = json_encode($this->getAllException($exception));
         return <<<HTML
 <html>
 <body>
 {$html}
 <script>
-Debugger.blueScreen({$info});
+Debugger.blueScreen({$info}, {$exceptions});
 </script>
 </body>
 </html>
@@ -20,12 +21,44 @@ HTML;
     }
 
     protected function getInfo($exception) {
+        return $this->formatException($exception);
+    }
+
+    protected function formatException($exception) {
         return [
             'name' => $exception instanceof \ErrorException
                 ? $this->errorTypeToString($exception->getSeverity())
                 : $this->getClass($exception),
-            'message' => $exception->getMessage()
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine()
         ];
+    }
+
+    protected function formatTrace(array $stace) {
+        return $stace;
+    }
+
+    protected function formatSource($file, $line) {
+        return '';
+    }
+
+    protected function getAllException($exception) {
+        $data = [];
+        do {
+            $info = $this->formatException($exception);
+            $stack = $exception->getTrace();
+            $info['trace'] = $this->formatTrace($stack);
+            $info['source'] = $this->formatSource($info['file'], $info['line']);
+            $data[] = $info;
+        } while ($exception = $exception->getPrevious());
+        return $data;
+    }
+
+
+
+    protected function get($exception) {
+        $lastError = $exception instanceof \ErrorException || $exception instanceof \Error ? null : error_get_last();
     }
 
     protected function getClass($obj) {
