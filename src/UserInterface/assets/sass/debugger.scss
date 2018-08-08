@@ -100,6 +100,20 @@
                     color: #333;
                 }
             }
+            .highlight {
+                background: #CD1818;
+                color: #fff;
+            }
+            
+        }
+        .func-val {
+            color: #f00;
+            display: inline-block;
+            max-width: 200px;
+            height: 30px;
+            line-height: 30px;
+            overflow: hidden;
+            text-overflow: ellipsis;  
         }
         &.expanded {
             >.panel-body {

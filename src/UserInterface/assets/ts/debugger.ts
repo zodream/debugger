@@ -40,7 +40,7 @@ class Debugger {
                 ex.trace.forEach(trace => {
                     html += '<div class="panel"><div class="panel-header"><p class="name">'+
                         (trace.class ? trace.class+trace.type : '')
-                        +trace.function+'('+trace.args.join(',')+')</p>';
+                        +trace.function+'(<span class="func-vals">'+ Debugger.formatParam(trace.args)+'</span>)</p>';
                     if (trace.file) {
                         html += '<p>'+trace.file+':'+trace.line+'</p>';
                     }
@@ -54,5 +54,13 @@ class Debugger {
             $(this).closest('.panel').toggleClass('expanded');
         });
         return box;
+    }
+
+    private static formatParam(data: any): string {
+        let html = '';
+        $.each(data, (i, item) => {
+            html += i+': <span class="func-val">' + item + '</span>, ';
+        });
+        return html.substr(0, html.length - 2);
     }
 }
