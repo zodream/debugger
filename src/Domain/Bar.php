@@ -3,13 +3,21 @@ namespace Zodream\Debugger\Domain;
 
 class Bar extends BaseBox {
 
+    protected $errors = [];
+
+    public function appendError($severity, $message, $file, $line) {
+        $message = 'PHP ' . $this->errorTypeToString($severity) . ": $message";
+        $this->errors[] = "$file[$line]: $message";
+    }
+
     public function render() {
         $info = $this->getProperties();
         $time = $info['Execution time'];
         $info = json_encode($info);
+        $errors = json_encode($this->errors);
         return <<<HTML
 <script>
-Debugger.bar('{$time}', {$info});
+Debugger.bar('{$time}', {$info}, {$errors});
 </script>
 HTML;
 

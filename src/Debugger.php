@@ -15,6 +15,11 @@ class Debugger {
 
     protected $showBar = true;
 
+    /**
+     * @var Bar
+     */
+    protected $bar;
+
     protected $showFireLogger = true;
 
     protected $booted = false;
@@ -78,6 +83,15 @@ class Debugger {
         return $data;
     }
 
+    /**
+     * @return Bar
+     */
+    public function getBar(): Bar {
+        if (empty($this->bar)) {
+            $this->bar = new Bar($this);
+        }
+        return $this->bar;
+    }
 
 
     public function boot() {
@@ -135,7 +149,7 @@ class Debugger {
         }
         if ($this->showBar && $this->isDebug) {
             $this->removeOutputBuffers(false);
-            echo (new Bar($this))->render();
+            echo $this->getBar()->render();
         }
     }
 
@@ -170,9 +184,14 @@ class Debugger {
      * @internal
      */
     public function errorHandler($severity, $message, $file, $line, $context = []) {
-        $e = new \ErrorException($message, 0, $severity, $file, $line);
-        $e->context = $context;
-        $this->exceptionHandler($e);
+        if ($severity === E_RECOVERABLE_ERROR || $severity === E_USER_ERROR) {
+            $e = new \ErrorException($message, 0, $severity, $file, $line);
+            $e->context = $context;
+            $this->exceptionHandler($e);
+            return;
+        }
+        $this->getBar()->appendError($severity, $message, $file, $line);
+        return;
     }
 
     protected function removeOutputBuffers($errorOccurred) {

@@ -3,14 +3,28 @@
     right: 0;
     bottom: 0;
     color: #333;
+    z-index: 9999;
     border: 1px solid #c9c9c9;
     background: #EDEAE0;
     min-width: 50px;
+    max-width: 100%;
     white-space: nowrap;
     box-shadow: 1px 1px 10px rgba(0, 0, 0, .15);
     .bar-title {
         cursor: pointer;
         padding: 0 8px;
+        position: relative;
+        .error-count {
+            background: #CD1818;
+            color: #fff;
+            display: block;
+            border-radius: 50%;
+            width: 20px;
+            position: absolute;
+            text-align: center;
+            left: -13px;
+            top: -10px;
+        }
     }
     .bar-info {
         display: none;
@@ -19,6 +33,10 @@
         background: #f9cfa6;
         table {
             border-collapse: collapse;
+            .error-tr {
+                background: #CD1818;
+                color: #fff;
+            }
             td {
                 line-height: 20px;
                 text-align: left;

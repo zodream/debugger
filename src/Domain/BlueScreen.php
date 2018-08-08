@@ -89,26 +89,7 @@ HTML;
         return explode("\x00", get_class($obj))[0];
     }
 
-    protected function errorTypeToString($type) {
-        $types = [
-            E_ERROR => 'Fatal Error',
-            E_USER_ERROR => 'User Error',
-            E_RECOVERABLE_ERROR => 'Recoverable Error',
-            E_CORE_ERROR => 'Core Error',
-            E_COMPILE_ERROR => 'Compile Error',
-            E_PARSE => 'Parse Error',
-            E_WARNING => 'Warning',
-            E_CORE_WARNING => 'Core Warning',
-            E_COMPILE_WARNING => 'Compile Warning',
-            E_USER_WARNING => 'User Warning',
-            E_NOTICE => 'Notice',
-            E_USER_NOTICE => 'User Notice',
-            E_STRICT => 'Strict standards',
-            E_DEPRECATED => 'Deprecated',
-            E_USER_DEPRECATED => 'User Deprecated',
-        ];
-        return isset($types[$type]) ? $types[$type] : 'Unknown error';
-    }
+
 
     public function highlightFile($file, $line, $lines = 15) {
         $source = @file_get_contents($file); // @ file may not exist

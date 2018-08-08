@@ -7,9 +7,16 @@ class Debugger {
     /**
      * bar
      */
-    public static bar(time: string, properties: any): JQuery {
+    public static bar(time: string, properties: any, errors: Array<string> = []): JQuery {
         let box = Debugger.createElement('bar');
-        let html = '<div class="bar-title"><i class="fa fa-bar-chart"></i>' + time +'<i class="fa fa-close"></i></div><div class="bar-info"><table class="bar-box">';
+        let html = '<div class="bar-title">';
+        if (errors && errors.length > 0) {
+            html += '<span class="error-count">' + errors.length + '</span>';
+        }
+        html += '<i class="fa fa-bar-chart"></i>' + time +'<i class="fa fa-close"></i></div><div class="bar-info"><table class="bar-box">';
+        $.each(errors, (i, item) => {
+            html += '<tr class="error-tr"><td colspan="2">'+item+'</td></tr>';
+        });
         $.each(properties, (i, item) => {
             html += '<tr><td>'+i+'</td><td>'+item+'</td></tr>';
         });
