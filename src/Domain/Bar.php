@@ -6,18 +6,24 @@ class Bar extends BaseBox {
     protected $errors = [];
 
     public function appendError($severity, $message, $file, $line) {
-        $message = 'PHP ' . $this->errorTypeToString($severity) . ": $message";
-        $this->errors[] = "$file[$line]: $message";
+        $message = 'PHP ' . $this->errorTypeToString($severity) . ': '.$message;
+        $this->errors[] = sprintf('%s[%s]: %s', $file, $line, $message);
     }
 
     public function render() {
         $info = $this->getProperties();
         $time = $info['Execution time'];
-        $info = json_encode($info);
-        $errors = json_encode($this->errors);
+        $times = app('timer')->endIfNot()->getTimes();
+        $data = [
+            '错误信息' => $this->errors,
+            '系统信息' => $info,
+            '运行信息' => array_map([$this, 'formatTime'], $times)
+        ];
+        $data = json_encode(array_filter($data));
+        $error_count = count($this->errors);
         return <<<HTML
 <script>
-Debugger.bar('{$time}', {$info}, {$errors});
+Debugger.bar('{$time}', {$error_count}, {$data});
 </script>
 HTML;
 
@@ -37,13 +43,17 @@ HTML;
         }));
     }
 
+    protected function formatTime($time) {
+        return number_format( $time * 1000, 1, '.', ' ') . ' ms';
+    }
+
     protected function getProperties() {
         $time = $this->debugger->getUsedTime();
         list($userUsage, $systemUsage) = $this->getCpuUsage($time);
         $opcache = function_exists('opcache_get_status') ? @opcache_get_status() : null; // @ can be restricted
         $cachedFiles = isset($opcache['scripts']) ? array_intersect(array_keys($opcache['scripts']), get_included_files()) : [];
         $info = [
-            'Execution time' => number_format( $time * 1000, 1, '.', ' ') . ' ms',
+            'Execution time' => $this->formatTime($time),
             'CPU usage user + system' => isset($userUsage) ? (int) $userUsage . ' % + ' . (int) $systemUsage . ' %' : null,
             'Peak of allocated memory' => number_format(memory_get_peak_usage() / 1000000, 2, '.', ' ') . ' MB',
             'Included files' => count(get_included_files()),

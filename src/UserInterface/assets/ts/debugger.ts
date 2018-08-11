@@ -7,19 +7,13 @@ class Debugger {
     /**
      * bar
      */
-    public static bar(time: string, properties: any, errors: Array<string> = []): JQuery {
+    public static bar(time: string, errors: number, info: any): JQuery {
         let box = Debugger.createElement('bar');
         let html = '<div class="bar-title">';
-        if (errors && errors.length > 0) {
-            html += '<span class="error-count">' + errors.length + '</span>';
+        if (errors > 0) {
+            html += '<span class="error-count">' + errors + '</span>';
         }
-        html += '<i class="fa fa-bar-chart"></i>' + time +'<i class="fa fa-close"></i></div><div class="bar-info"><table class="bar-box">';
-        $.each(errors, (i, item) => {
-            html += '<tr class="error-tr"><td colspan="2">'+item+'</td></tr>';
-        });
-        $.each(properties, (i, item) => {
-            html += '<tr><td>'+i+'</td><td>'+item+'</td></tr>';
-        });
+        html += '<i class="fa fa-bar-chart"></i>' + time +'<i class="fa fa-close"></i></div><div class="bar-info"><table class="bar-box">' + Debugger.createTable(info);
         box.html(html + '</table></div>');
         box.on('click', '.bar-title .fa-bar-chart', function() {
             $(this).closest('.debugger-bar').toggleClass('expanded');
@@ -27,6 +21,26 @@ class Debugger {
             $(this).closest('.debugger-bar').remove();
         });
         return box;
+    }
+
+    private static createTable(data: any): string {
+        let html = '';
+        $.each(data, (name, info) => {
+            let tr = '',
+                isArr = info && info instanceof Array;
+            $.each(info, (i, item) => {
+                if (isArr) {
+                    tr += '<tr><td colspan="2">'+item+'</td></tr>';
+                    return;
+                }
+                tr += '<tr><td>'+i+'</td><td>'+item+'</td></tr>';
+            });
+            if (tr == '') {
+                return;
+            }
+            html += '<tr class="header-tr"><td colspan="2">'+name+'</td></tr>' + tr;
+        });
+        return html;
     }
 
     private static createElement(name: string): JQuery {

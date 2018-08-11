@@ -5,6 +5,7 @@ use Exception;
 use Zodream\Debugger\Domain\Bar;
 use Zodream\Debugger\Domain\BlueScreen;
 use Zodream\Debugger\Domain\Dumper;
+use Zodream\Service\Factory;
 
 class Debugger {
 
@@ -166,6 +167,13 @@ class Debugger {
             return;
         }
         $this->reserved = null;
+        if (!headers_sent()) {
+            http_response_code(isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') !== false ? 503 : 500);
+            if (app('request')->isHtml()) {
+                header('Content-Type: text/html; charset=UTF-8');
+            }
+        }
+        Factory::log()->error($exception->getMessage());
         echo (new BlueScreen($this))->render($exception);
         if ($exit) {
             exit(255);

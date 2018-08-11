@@ -4,16 +4,31 @@ namespace Zodream\Debugger\Domain;
 use Zodream\Disk\Stream;
 use Zodream\Service\Factory;
 use Zodream\Helpers\Time;
+
 class Timer {
+
+    const STATUS_NONE = 0,
+        STATUS_RUNNING = 1,
+        STATUS_END = 2;
+
 	protected $startTime;
 
     protected $lastTime;
 
     protected $times = [];
-	
-	public function begin() {
+
+    protected $status = self::STATUS_NONE;
+
+    public function __construct() {
+        $this->begin();
+    }
+
+    public function begin() {
         $this->lastTime = $this->startTime = Time::millisecond();
-        $this->times['begin'] = 0;
+        $this->times = [
+            'begin' => 0
+        ];
+        $this->status = self::STATUS_RUNNING;
 	}
 
 	public function record($name) {
@@ -27,8 +42,16 @@ class Timer {
 	
 	public function end() {
 	    $this->record('end');
+	    $this->status = self::STATUS_END;
 		return $this->getCount();
 	}
+
+	public function endIfNot() {
+	    if ($this->status == self::STATUS_RUNNING) {
+	        $this->end();
+        }
+        return $this;
+    }
 
 	public function getCount() {
 	    return $this->lastTime - $this->startTime;
