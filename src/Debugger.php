@@ -148,7 +148,7 @@ class Debugger {
 //            );
             return;
         }
-        if ($this->showBar && $this->isDebug) {
+        if ($this->showBar && $this->isDebug && !app('request')->isCli()) {
             $this->removeOutputBuffers(false);
             echo $this->getBar()->render();
         }
@@ -167,6 +167,9 @@ class Debugger {
             return;
         }
         $this->reserved = null;
+        if (app('request')->isCli()) {
+            return;
+        }
         if (!headers_sent()) {
             http_response_code(isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') !== false ? 503 : 500);
             if (app('request')->isHtml()) {
