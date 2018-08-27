@@ -40,10 +40,10 @@ class Debugger {
     protected $cpuUsage;
 
     public function __construct() {
-        $this->isDebug = app()->isDebug();
         $this->reserved = str_repeat('t', 30000);
         $this->time = isset($_SERVER['REQUEST_TIME_FLOAT']) ? $_SERVER['REQUEST_TIME_FLOAT'] : microtime(true);
         $this->obLevel = ob_get_level();
+        $this->isDebug = app()->isDebug();
         $this->cpuUsage = $this->isDebug && function_exists('getrusage') ? getrusage() : null;
         // php configuration
         ini_set('display_errors', $this->isDebug ? '1' : '0'); // or 'stderr'
