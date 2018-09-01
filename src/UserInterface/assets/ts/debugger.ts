@@ -44,7 +44,11 @@ class Debugger {
     }
 
     private static createElement(name: string): JQuery {
-        let box = $('<div class="debugger-' + name +'"></div>');
+        let box = $('.debugger-' + name);
+        if (box.length == 1) {
+            return box;
+        }
+        box = $('<div class="debugger-' + name +'"></div>');
         $(document.body).append(box);
         return box;
     }

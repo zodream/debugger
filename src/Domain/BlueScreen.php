@@ -5,19 +5,13 @@ namespace Zodream\Debugger\Domain;
 class BlueScreen extends BaseBox {
 
     public function render($exception) {
-        $info = json_encode($this->getInfo($exception));
-        $html = view()->header().view()->footer();
-        $exceptions = json_encode($this->getAllException($exception));
-        return <<<HTML
-<html>
-<body>
-{$html}
-<script>
-Debugger.blueScreen({$info}, {$exceptions});
-</script>
-</body>
-</html>
-HTML;
+        $base_dir = dirname(__DIR__).'/UserInterface/';
+        if (!app()->isDebug()) {
+            return view($base_dir.'Error/404.php');
+        }
+        $info = $this->getInfo($exception);
+        $exceptions = $this->getAllException($exception);
+        return view($base_dir.'Home/index.php', compact('info', 'exceptions'));
     }
 
     protected function getInfo($exception) {
