@@ -68,7 +68,7 @@ class BlueScreen extends BaseBox {
         $data = [];
         foreach ($trace['args'] as $key => $value) {
             $name = isset($params[$key]) ? '$' . $params[$key]->name : "#$key";
-            $data[$name] = var_export($value, true);
+            $data[$name] = print_r($value, true);
         }
         return $data;
     }
