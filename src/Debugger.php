@@ -111,6 +111,11 @@ class Debugger {
     }
 
     public function registerAssets() {
+        if (app('request')->isAjax()
+            || app('request')->isPjax()
+            || app('request')->isCli()) {
+            return;
+        }
         view()->registerJsFile('@jquery.min.js')
             ->registerJsFile('@debugger.min.js')
             ->registerCssFile('@font-awesome.min.css')
@@ -138,7 +143,9 @@ class Debugger {
             return;
         }
         $this->reserved = null;
-        if (app('request')->isAjax()) {
+        if (app('request')->isAjax()
+            || app('request')->isPjax()
+            || app('request')->isCli()) {
             return;
         }
 
