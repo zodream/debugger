@@ -177,6 +177,7 @@ class Debugger {
         }
         $this->reserved = null;
         if (app('request')->isCli()) {
+            throw $exception;
             return;
         }
         if (!headers_sent()) {
