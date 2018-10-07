@@ -8,6 +8,9 @@ class Debugger {
      * bar
      */
     public static bar(time: string, errors: number, info: any): JQuery {
+        if ($.cookie && $.cookie('debugger-bar') == 1) {
+            return;
+        }
         let box = Debugger.createElement('bar');
         let html = '<div class="bar-title">';
         if (errors > 0) {
@@ -19,6 +22,9 @@ class Debugger {
             $(this).closest('.debugger-bar').toggleClass('expanded');
         }).on('click', '.bar-title .fa-close', function() {
             $(this).closest('.debugger-bar').remove();
+            if ($.cookie) {
+                $.cookie('debugger-bar', 1);
+            }
         });
         return box;
     }
