@@ -39,4 +39,9 @@ class Log {
         }
         echo $color,$message,self::COLOR_DEFAULT,PHP_EOL;
     }
+
+    public static function removeLine() {
+        system("tput cuu1");
+        system("tput el");
+    }
 }
