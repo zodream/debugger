@@ -104,7 +104,6 @@ class Debugger {
             set_exception_handler([$this, 'exceptionHandler']);
             set_error_handler([$this, 'errorHandler']);
         }
-
         $this->dispatch();
         $this->registerAssets();
         $this->booted = true;
@@ -143,12 +142,6 @@ class Debugger {
             return;
         }
         $this->reserved = null;
-        if (app('request')->isAjax()
-            || app('request')->isPjax()
-            || app('request')->isCli()) {
-            return;
-        }
-
         $error = error_get_last();
         if (in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE, E_RECOVERABLE_ERROR, E_USER_ERROR], true)) {
 //            self::exceptionHandler(
@@ -157,9 +150,9 @@ class Debugger {
 //            );
             return;
         }
-        if ($this->showBar && $this->isDebug && !app('request')->isCli()) {
+        if ($this->showBar && $this->isDebug) {
             $this->removeOutputBuffers(false);
-            echo $this->getBar()->render();
+            $this->getBar()->render();
         }
     }
 

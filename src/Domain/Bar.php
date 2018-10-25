@@ -11,6 +11,16 @@ class Bar extends BaseBox {
     }
 
     public function render() {
+        if (app('request')->isAjax()
+            || app('request')->isPjax()
+            || app('request')->isCli()) {
+            return;
+        }
+        $header_list = implode("\n", headers_list());
+        if (preg_match('#^Location:#im', $header_list)
+            || preg_match('#^Content-Type: (?!text/html)#im', $header_list)) {
+            return;
+        }
         $info = $this->getProperties();
         $time = $info['Execution time'];
         $times = app('timer')->endIfNot()->getTimes();
@@ -21,7 +31,7 @@ class Bar extends BaseBox {
         ];
         $data = json_encode(array_filter($data));
         $error_count = count($this->errors);
-        return <<<HTML
+        echo <<<HTML
 <script>
 Debugger.bar('{$time}', {$error_count}, {$data});
 </script>
