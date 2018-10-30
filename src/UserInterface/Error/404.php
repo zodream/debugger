@@ -22,7 +22,7 @@ $this->registerJsFile('@jquery.min.js')
     <div class="debugger-error">
         <div class="error-content">
             <div class="title">
-                Sorry, the page you are looking for could not be found.  
+                <?=__('Sorry, the page you are looking for could not be found. ')?>
             </div>
         </div>
     </div>
