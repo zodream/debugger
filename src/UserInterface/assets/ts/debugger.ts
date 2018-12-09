@@ -16,9 +16,9 @@ class Debugger {
         if (errors > 0) {
             html += '<span class="error-count">' + errors + '</span>';
         }
-        html += '<i class="fa fa-bar-chart"></i>' + time +'<i class="fa fa-close"></i></div><div class="bar-info"><table class="bar-box">' + Debugger.createTable(info);
+        html += '<i class="fa fa-chart-bar"></i>' + time +'<i class="fa fa-close"></i></div><div class="bar-info"><table class="bar-box">' + Debugger.createTable(info);
         box.html(html + '</table></div>');
-        box.on('click', '.bar-title .fa-bar-chart', function() {
+        box.on('click', '.bar-title .fa-chart-bar', function() {
             $(this).closest('.debugger-bar').toggleClass('expanded');
         }).on('click', '.bar-title .fa-close', function() {
             $(this).closest('.debugger-bar').remove();
