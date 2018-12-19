@@ -57,6 +57,9 @@ class BlueScreen extends BaseBox {
 
 
     protected function formatParameter($trace) {
+        if (!isset($trace['args'])) {
+            return [];
+        }
         try {
             $r = isset($row['class'])
                 ? new \ReflectionMethod($trace['class'], $trace['function'])
