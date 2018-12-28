@@ -25,7 +25,7 @@ $this->registerJsFile('@jquery.min.js')
             <h1><?=$info['message']?></h1>
         </div>
         <?php foreach($exceptions as $ex):?>
-        <div class="panel">
+        <div class="panel expanded">
             <div class="panel-header">
                 <p class="name"><?=$ex['name']?>: <?=$ex['message']?></p>
                 <p><?=$ex['file']?>: <?=$ex['line']?></p>
@@ -33,7 +33,7 @@ $this->registerJsFile('@jquery.min.js')
             <div class="panel-body">
                 <?php if(isset($ex['trace'])):?>
                 <?php foreach($ex['trace'] as $item):?>
-                <div class="panel">
+                <div class="panel expanded">
                     <div class="panel-header">
                         <p class="name">
                         <?php if(isset($item['class'])):?>

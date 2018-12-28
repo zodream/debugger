@@ -80,10 +80,10 @@ class Debugger {
             }
             html += '</div></div>';
         });
-        box.html(html);
-        box.on('click', '.panel .panel-header', function() {
+        box.html(html)
+            .on('click', '.panel .panel-header', function() {
             $(this).closest('.panel').toggleClass('expanded');
-        });
+        }).find('.panel').removeClass('expanded');
         return box;
     }
 
