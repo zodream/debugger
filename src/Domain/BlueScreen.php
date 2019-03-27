@@ -2,6 +2,8 @@
 namespace Zodream\Debugger\Domain;
 
 
+use Zodream\Template\ViewFactory;
+
 class BlueScreen extends BaseBox {
 
     public function render($exception) {
@@ -11,7 +13,7 @@ class BlueScreen extends BaseBox {
         }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
-        return view($base_dir.'Home/index.php', compact('info', 'exceptions'));
+        return (new ViewFactory())->render($base_dir.'Home/index.php', compact('info', 'exceptions'));
     }
 
     protected function getInfo($exception) {
