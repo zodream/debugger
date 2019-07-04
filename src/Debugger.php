@@ -63,6 +63,15 @@ class Debugger {
     }
 
     /**
+     * @param bool $showBar
+     * @return Debugger
+     */
+    public function setShowBar(bool $showBar) {
+        $this->showBar = $showBar;
+        return $this;
+    }
+
+    /**
      * @return integer
      */
     public function getUsedTime() {
