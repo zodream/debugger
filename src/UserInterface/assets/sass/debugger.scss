@@ -142,14 +142,17 @@
         }
         .func-val-box {
             line-height: 30px;
-            background-color: #c9c9c9;
+            background-color: #f9cfa6;
             label {
                 display: inline-block;
                 min-width: 100px;
                 text-align: right;
             }
             code {
-                color: red;
+                background: rgba(127,127,127,.05);
+                border: 1px solid rgba(0,0,0,.18);
+                display: block;
+                overflow: auto;
             }
         }
         &.expanded {

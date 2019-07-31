@@ -75,7 +75,7 @@ class Debugger {
                     if (trace.file) {
                         html += '<p>'+trace.file+':'+trace.line+'</p>';
                     }
-                    html +='</div><div class="panel-body">'+trace.source+ Debugger.formatParam(trace.args)+'</div></div>';
+                    html +='</div><div class="panel-body">'+ (trace.source || '') + Debugger.formatParam(trace.args)+'</div></div>';
                 });
             }
             html += '</div></div>';
@@ -93,7 +93,7 @@ class Debugger {
         }
         let html = '';
         $.each(data, (i, item) => {
-            html += `<p><label>${i}</label>: <code>${item}</code></p>`;
+            html += `<div class="val-tr"><label>${i}</label>: <pre><code class="language-php">${item}</code><pre></div>`;
         });
         return `<div class="func-val-box">${html}</div>`;
     }
