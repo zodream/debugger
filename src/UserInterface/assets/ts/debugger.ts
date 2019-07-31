@@ -71,11 +71,11 @@ class Debugger {
                 ex.trace.forEach(trace => {
                     html += '<div class="panel"><div class="panel-header"><p class="name">'+
                         (trace.class ? trace.class+trace.type : '')
-                        +trace.function+'(<span class="func-vals">'+ Debugger.formatParam(trace.args)+'</span>)</p>';
+                        +trace.function+'</p>';
                     if (trace.file) {
                         html += '<p>'+trace.file+':'+trace.line+'</p>';
                     }
-                    html +='</div><div class="panel-body">'+trace.source+'</div></div>';
+                    html +='</div><div class="panel-body">'+trace.source+ Debugger.formatParam(trace.args)+'</div></div>';
                 });
             }
             html += '</div></div>';
@@ -88,10 +88,13 @@ class Debugger {
     }
 
     private static formatParam(data: any): string {
+        if (!data || Object.keys(data).length < 1) {
+            return '';
+        }
         let html = '';
         $.each(data, (i, item) => {
-            html += i+': <span class="func-val">' + item + '</span>, ';
+            html += `<p><label>${i}</label>: <code>${item}</code></p>`;
         });
-        return html.substr(0, html.length - 2);
+        return `<div class="func-val-box">${html}</div>`;
     }
 }

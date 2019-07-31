@@ -140,6 +140,18 @@
             overflow: hidden;
             text-overflow: ellipsis;  
         }
+        .func-val-box {
+            line-height: 30px;
+            background-color: #c9c9c9;
+            label {
+                display: inline-block;
+                min-width: 100px;
+                text-align: right;
+            }
+            code {
+                color: red;
+            }
+        }
         &.expanded {
             >.panel-body {
                 display: block;

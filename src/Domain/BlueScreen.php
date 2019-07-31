@@ -2,6 +2,8 @@
 namespace Zodream\Debugger\Domain;
 
 
+use Zodream\Disk\FileSystem;
+use Zodream\Service\Factory;
 use Zodream\Template\ViewFactory;
 
 class BlueScreen extends BaseBox {
@@ -26,9 +28,13 @@ class BlueScreen extends BaseBox {
                 ? $this->errorTypeToString($exception->getSeverity())
                 : $this->getClass($exception),
             'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
+            'file' => $this->getRelative($exception->getFile()),
             'line' => $exception->getLine()
         ];
+    }
+
+    protected function getRelative($file) {
+        return FileSystem::relativePath(Factory::root(), $file);
     }
 
     protected function formatTrace(array $traces) {
@@ -36,6 +42,7 @@ class BlueScreen extends BaseBox {
             $trace['args'] = $this->formatParameter($trace);
             if (isset($trace['file']) && !empty($trace['file'])) {
                 $trace['source'] = $this->formatSource($trace['file'], $trace['line']);
+                $trace['file'] = $this->getRelative($trace['file']);
             }
         }
         return $traces;
