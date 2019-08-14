@@ -25,6 +25,11 @@
             left: -13px;
             top: -10px;
         }
+        .fa-close {
+            &::before {
+                content: "\f00d";
+            }
+        }
     }
     .bar-info {
         display: none;
