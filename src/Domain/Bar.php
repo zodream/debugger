@@ -1,13 +1,31 @@
 <?php
 namespace Zodream\Debugger\Domain;
 
+use Zodream\Disk\FileSystem;
+use Zodream\Service\Factory;
+
 class Bar extends BaseBox {
 
-    protected $errors = [];
+    protected $data = [
+        'Queries' => [],
+        'Views' => [],
+        'Errors' => [],
+    ];
+
+    public function appendQuery($sql, $bindings, $time) {
+        $this->data['Queries'][] = sprintf('[%sms] %s', $time, $sql);
+        return $this;
+    }
+
+    public function appendView($file, $time, $type = 'Rendered') {
+        $this->data['Views'][] = sprintf('[%s] %s : %sms', $type, FileSystem::relativePath(Factory::root(), $file), $time);
+        return $this;
+    }
 
     public function appendError($severity, $message, $file, $line) {
         $message = 'PHP ' . $this->errorTypeToString($severity) . ': '.$message;
-        $this->errors[] = sprintf('%s[%s]: %s', $file, $line, $message);
+        $this->data['Errors'][] = sprintf('%s[%s]: %s', $file, $line, $message);
+        return $this;
     }
 
     public function render() {
@@ -25,12 +43,14 @@ class Bar extends BaseBox {
         $time = $info['Execution time'];
         $times = app('timer')->endIfNot()->getTimes();
         $data = [
-            '错误信息' => $this->errors,
-            '系统信息' => $info,
-            '运行信息' => array_map([$this, 'formatTime'], $times)
+            __('Error Message') => $this->data['Errors'],
+            __('System Info') => $info,
+            __('Execute Info') => array_map([$this, 'formatTime'], $times),
+            __('Queries({count})', ['count' => count($this->data['Queries'])]) => $this->data['Queries'],
+            __('Views({count})', ['count' => count($this->data['Views'])]) => $this->data['Views']
         ];
         $data = json_encode(array_filter($data));
-        $error_count = count($this->errors);
+        $error_count = count($this->data['Errors']);
         echo <<<HTML
 <script>
 Debugger.bar('{$time}', {$error_count}, {$data});

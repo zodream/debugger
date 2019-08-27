@@ -2,10 +2,13 @@
 namespace Zodream\Debugger;
 
 use Exception;
+use Zodream\Database\Events\QueryExecuted;
 use Zodream\Debugger\Domain\Bar;
 use Zodream\Debugger\Domain\BlueScreen;
 use Zodream\Debugger\Domain\Dumper;
 use Zodream\Service\Factory;
+use Zodream\Template\Events\ViewCompiled;
+use Zodream\Template\Events\ViewRendered;
 
 class Debugger {
 
@@ -116,6 +119,18 @@ class Debugger {
         $this->dispatch();
         $this->registerAssets();
         $this->booted = true;
+        if (!$this->showBar || !$this->isDebug) {
+            return;
+        }
+        event()->listen(QueryExecuted::class, function (QueryExecuted $executed) {
+            $this->getBar()->appendQuery($executed->sql, $executed->bindings, $executed->time);
+        });
+        event()->listen(ViewCompiled::class, function (ViewCompiled $compiled) {
+            $this->getBar()->appendView($compiled->file, $compiled->time, 'Compiled');
+        });
+        event()->listen(ViewRendered::class, function (ViewRendered $rendered) {
+            $this->getBar()->appendView($rendered->file, $rendered->time);
+        });
     }
 
     public function registerAssets() {

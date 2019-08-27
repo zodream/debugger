@@ -38,14 +38,22 @@
         background: #f9cfa6;
         table {
             border-collapse: collapse;
+            tr {
+                cursor: pointer;
+                &:hover {
+                    color: #CD1818;
+                }
+            }
             .error-tr {
                 background: #CD1818;
                 color: #fff;
             }
             .header-tr {
+                background-color: #faf0e7;
                 td {
                     line-height: 30px;
                     font-weight: 600;
+                    border: none;
                 }
             }
             td {

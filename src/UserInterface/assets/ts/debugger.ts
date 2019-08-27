@@ -35,11 +35,15 @@ class Debugger {
             let tr = '',
                 isArr = info && info instanceof Array;
             $.each(info, (i, item) => {
-                if (isArr) {
-                    tr += '<tr><td colspan="2">'+item+'</td></tr>';
+                if (!isArr) {
+                    tr += '<tr><td>'+i+'</td><td>'+item+'</td></tr>';
                     return;
                 }
-                tr += '<tr><td>'+i+'</td><td>'+item+'</td></tr>';
+                if (typeof item == 'object') {
+                    tr += '<tr><td>'+item.name+'</td><td>'+item.value+'</td></tr>';
+                    return;
+                }
+                tr += '<tr><td colspan="2">'+item+'</td></tr>';
             });
             if (tr == '') {
                 return;
