@@ -31,6 +31,7 @@ class Bar extends BaseBox {
     public function render() {
         if (app('request')->isAjax()
             || app('request')->isPjax()
+            || app('request')->isPreFlight()
             || app('request')->isCli()) {
             return;
         }

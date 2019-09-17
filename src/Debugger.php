@@ -136,6 +136,7 @@ class Debugger {
     public function registerAssets() {
         if (app('request')->isAjax()
             || app('request')->isPjax()
+            || app('request')->isPreFlight()
             || app('request')->isCli()) {
             return;
         }
