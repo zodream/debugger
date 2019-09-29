@@ -3,6 +3,7 @@ namespace Zodream\Debugger\Domain;
 
 
 use Zodream\Disk\FileSystem;
+use Zodream\Helpers\Json;
 use Zodream\Service\Factory;
 use Zodream\Template\ViewFactory;
 
@@ -15,7 +16,11 @@ class BlueScreen extends BaseBox {
         }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
-        return (new ViewFactory())->render($base_dir.'Home/index.php', compact('info', 'exceptions'));
+        $data = compact('info', 'exceptions');
+        if (app('request')->wantsJson()) {
+            return Json::encode($data);
+        }
+        return (new ViewFactory())->render($base_dir.'Home/index.php', $data);
     }
 
     protected function getInfo($exception) {

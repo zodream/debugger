@@ -199,7 +199,8 @@ class Debugger {
             return;
         }
         if (!headers_sent()) {
-            http_response_code(isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') !== false ? 503 : 500);
+            http_response_code(isset($_SERVER['HTTP_USER_AGENT'])
+            && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') !== false ? 503 : 500);
             if (app('request')->isHtml()) {
                 header('Content-Type: text/html; charset=UTF-8');
             }
