@@ -32,7 +32,7 @@ class BlueScreen extends BaseBox {
             'name' => $exception instanceof \ErrorException
                 ? $this->errorTypeToString($exception->getSeverity())
                 : $this->getClass($exception),
-            'message' => $exception->getMessage(),
+            'message' => htmlspecialchars($exception->getMessage()),
             'file' => $this->getRelative($exception->getFile()),
             'line' => $exception->getLine()
         ];
