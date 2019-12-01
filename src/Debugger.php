@@ -221,6 +221,7 @@ class Debugger {
      * @param $line
      * @param array $context
      * @return void false to call normal error handler, null otherwise
+     * @throws \Throwable
      * @internal
      */
     public function errorHandler($severity, $message, $file, $line, $context = []) {
