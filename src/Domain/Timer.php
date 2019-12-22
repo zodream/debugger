@@ -65,7 +65,7 @@ class Timer {
     }
 
     public function log() {
-        $stream = new Stream(Factory::root()->file('log/timer.log'));
+        $stream = new Stream(Factory::root()->file('data/log/timer.log'));
         $stream->open('w')
             ->writeLine(Time::format())
             ->writeLine($this->startTime);
