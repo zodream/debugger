@@ -140,6 +140,9 @@ class Debugger {
             || app('request')->isCli()) {
             return;
         }
+        if (!app()->isDebug()) {
+            return;
+        }
         view()->registerJsFile('@jquery.min.js')
             ->registerJsFile('@debugger.min.js')
             ->registerCssFile('@font-awesome.min.css')
