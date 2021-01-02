@@ -1,12 +1,11 @@
 <?php
 namespace Zodream\Debugger;
 
-use Exception;
+use Throwable;
 use Zodream\Database\Events\QueryExecuted;
 use Zodream\Debugger\Domain\Bar;
 use Zodream\Debugger\Domain\BlueScreen;
-use Zodream\Debugger\Domain\Dumper;
-use Zodream\Service\Factory;
+use Zodream\Service\Console\Output;
 use Zodream\Template\Events\ViewCompiled;
 use Zodream\Template\Events\ViewRendered;
 
@@ -111,11 +110,12 @@ class Debugger {
         if ($this->booted) {
             return;
         }
-        if (!app()->hasBeenBootstrapped()) {
-            register_shutdown_function([$this, 'shutdownHandler']);
-            set_exception_handler([$this, 'exceptionHandler']);
-            set_error_handler([$this, 'errorHandler']);
-        }
+//        if (!app()->hasBeenBootstrapped()) {
+//
+//        }
+        register_shutdown_function([$this, 'shutdownHandler']);
+        set_exception_handler([$this, 'exceptionHandler']);
+        set_error_handler([$this, 'errorHandler']);
         $this->dispatch();
         $this->registerAssets();
         $this->booted = true;
@@ -143,11 +143,6 @@ class Debugger {
         if (!app()->isDebug()) {
             return;
         }
-        view()->registerJsFile('@jquery.min.js')
-            ->registerJsFile('@debugger.min.js')
-            ->registerCssFile('@font-awesome.min.css')
-            ->registerCssFile('@zodream.css')
-            ->registerCssFile('@debugger.css');
     }
 
     public function dispatch() {
@@ -198,7 +193,7 @@ class Debugger {
         }
         $this->reserved = null;
         if (app('request')->isCli()) {
-            throw $exception;
+            $this->renderForConsole(app(Output::class), $exception);
             return;
         }
         if (!headers_sent()) {
@@ -208,7 +203,7 @@ class Debugger {
                 header('Content-Type: text/html; charset=UTF-8');
             }
         }
-        Factory::log()->error($exception->getMessage());
+        logger()->error($exception->getMessage());
         echo (new BlueScreen($this))->render($exception);
         if ($exit) {
             exit(255);
@@ -235,7 +230,6 @@ class Debugger {
             return;
         }
         $this->getBar()->appendError($severity, $message, $file, $line);
-        return;
     }
 
     protected function removeOutputBuffers($errorOccurred) {
@@ -251,6 +245,12 @@ class Debugger {
         }
     }
 
-
+    public function renderForConsole(Output $output, Throwable $e) {
+        $output->writeln('');
+        $output->writeln(sprintf('%s: %d', get_class($e), $e->getCode()));
+        do {
+            $output->writeln(sprintf('%s in %s: %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+        } while ($e = $e->getPrevious());
+    }
 
 }

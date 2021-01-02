@@ -3,8 +3,8 @@ namespace Zodream\Debugger\Domain;
 
 
 use Zodream\Disk\FileSystem;
+use Zodream\Helpers\Html;
 use Zodream\Helpers\Json;
-use Zodream\Service\Factory;
 use Zodream\Template\ViewFactory;
 
 class BlueScreen extends BaseBox {
@@ -16,11 +16,10 @@ class BlueScreen extends BaseBox {
         }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
-        $data = compact('info', 'exceptions');
         if (app('request')->wantsJson()) {
-            return Json::encode($data);
+            return Json::encode($info);
         }
-        return (new ViewFactory())->render($base_dir.'Home/index.php', $data);
+        return (new ViewFactory())->render($base_dir.'Home/index.php', compact('info', 'exceptions'));
     }
 
     protected function getInfo($exception) {
@@ -39,7 +38,7 @@ class BlueScreen extends BaseBox {
     }
 
     protected function getRelative($file) {
-        return FileSystem::relativePath(Factory::root(), $file);
+        return FileSystem::relativePath(app_path(), $file);
     }
 
     protected function formatTrace(array $traces) {
@@ -85,7 +84,7 @@ class BlueScreen extends BaseBox {
         $data = [];
         foreach ($trace['args'] as $key => $value) {
             $name = isset($params[$key]) ? '$' . $params[$key]->name : "#$key";
-            $data[$name] = print_r($value, true);
+            $data[$name] = Html::text(print_r($value, true));
         }
         return $data;
     }

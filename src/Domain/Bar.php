@@ -2,7 +2,7 @@
 namespace Zodream\Debugger\Domain;
 
 use Zodream\Disk\FileSystem;
-use Zodream\Service\Factory;
+use Zodream\Infrastructure\Support\Html;
 
 class Bar extends BaseBox {
 
@@ -18,7 +18,7 @@ class Bar extends BaseBox {
     }
 
     public function appendView($file, $time, $type = 'Rendered') {
-        $this->data['Views'][] = sprintf('[%s] %s : %sms', $type, FileSystem::relativePath(Factory::root(), $file), $time);
+        $this->data['Views'][] = sprintf('[%s] %s : %sms', $type, FileSystem::relativePath(app_path(), $file), $time);
         return $this;
     }
 
@@ -42,7 +42,7 @@ class Bar extends BaseBox {
         }
         $info = $this->getProperties();
         $time = $info['Execution time'];
-        $times = app('timer')->endIfNot()->getTimes();
+        $times = timer()->endIfNot()->toArray();
         $data = [
             __('Error Message') => $this->data['Errors'],
             __('System Info') => $info,
@@ -52,7 +52,21 @@ class Bar extends BaseBox {
         ];
         $data = json_encode(array_filter($data));
         $error_count = count($this->data['Errors']);
+        $html = '';
+        foreach ([
+            '@debugger.css'
+                 ] as $file) {
+            $html .= Html::link(view()->getAssetUri($file));
+        }
+        foreach ([
+            '@debugger.min.js'
+                 ] as $file) {
+            $html .= Html::script('', [
+                'src' =>view()->getAssetUri($file)
+            ]);
+        }
         echo <<<HTML
+{$html}
 <script>
 Debugger.bar('{$time}', {$error_count}, {$data});
 </script>
@@ -75,7 +89,7 @@ HTML;
     }
 
     protected function formatTime($time) {
-        return number_format( $time * 1000, 1, '.', ' ') . ' ms';
+        return number_format( $time * 1000, 1, '.', ' ') . ' ms';
     }
 
     protected function getProperties() {
@@ -85,7 +99,7 @@ HTML;
         $cachedFiles = isset($opcache['scripts']) ? array_intersect(array_keys($opcache['scripts']), get_included_files()) : [];
         $info = [
             'Execution time' => $this->formatTime($time),
-            'CPU usage user + system' => isset($userUsage) ? (int) $userUsage . ' % + ' . (int) $systemUsage . ' %' : null,
+            'CPU usage user + system' => isset($userUsage) ? (int) $userUsage . ' % + ' . (int) $systemUsage . ' %' : null,
             'Peak of allocated memory' => number_format(memory_get_peak_usage() / 1000000, 2, '.', ' ') . ' MB',
             'Included files' => count(get_included_files()),
             'OPcache' => $opcache ? round(count($cachedFiles) * 100 / count(get_included_files())) . '% cached' : null,

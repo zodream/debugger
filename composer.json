@@ -13,8 +13,8 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0",
-        "symfony/var-dumper": "^5.1"
+        "php": ">=8.0",
+        "symfony/var-dumper": "^5.2"
     },
     "autoload": {
         "psr-4": {
@@ -23,5 +23,12 @@
         "files": [
             "src/helpers.php"
         ]
+    },
+    "extra": {
+        "zodream": {
+            "providers": [
+                "Zodream\\Debugger\\DebuggerServiceProvider"
+            ]
+        }
     }
 }

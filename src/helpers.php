@@ -11,11 +11,19 @@ if (! function_exists('dd')) {
      * @return void
      */
     function dd(...$args) {
-        foreach ($args as $x) {
-            (new Dumper)->dump($x);
-        }
+        (new Dumper())->dumpResponse(...$args);
+    }
+}
 
-        die(1);
+if (! function_exists('dr')) {
+    /**
+     * Dump the passed variables and end the script.
+     *
+     * @param  mixed  $args
+     * @return void
+     */
+    function dr(...$args) {
+        (new Dumper())->dumpResponse(...$args);
     }
 }
 
