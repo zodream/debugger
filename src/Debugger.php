@@ -134,10 +134,10 @@ class Debugger {
     }
 
     public function registerAssets() {
-        if (app('request')->isAjax()
-            || app('request')->isPjax()
-            || app('request')->isPreFlight()
-            || app('request')->isCli()) {
+        if (request()->isAjax()
+            || request()->isPjax()
+            || request()->isPreFlight()
+            || request()->isCli()) {
             return;
         }
         if (!app()->isDebug()) {
@@ -192,19 +192,12 @@ class Debugger {
             return;
         }
         $this->reserved = null;
-        if (app('request')->isCli()) {
+        if (request()->isCli()) {
             $this->renderForConsole(app(Output::class), $exception);
             return;
         }
-        if (!headers_sent()) {
-            http_response_code(isset($_SERVER['HTTP_USER_AGENT'])
-            && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE ') !== false ? 503 : 500);
-            if (app('request')->isHtml()) {
-                header('Content-Type: text/html; charset=UTF-8');
-            }
-        }
         logger()->error($exception->getMessage());
-        echo (new BlueScreen($this))->render($exception);
+        (new BlueScreen($this))->render($exception)->send();
         if ($exit) {
             exit(255);
         }

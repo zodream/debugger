@@ -13,7 +13,7 @@ class Dumper {
      * @return void
      */
     public static function dump($value) {
-        if (!app('request')->isCli() && class_exists(CliDumper::class)) {
+        if (!request()->isCli() && class_exists(CliDumper::class)) {
             $dumper = in_array(PHP_SAPI, ['cli', 'phpdbg']) ? new CliDumper : new HtmlDumper;
 
             $dumper->dump((new VarCloner)->cloneVar($value));

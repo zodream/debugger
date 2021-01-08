@@ -5,21 +5,23 @@ namespace Zodream\Debugger\Domain;
 use Zodream\Disk\FileSystem;
 use Zodream\Helpers\Html;
 use Zodream\Helpers\Json;
+use Zodream\Infrastructure\Contracts\Http\Output;
 use Zodream\Template\ViewFactory;
 
 class BlueScreen extends BaseBox {
 
-    public function render($exception) {
+    public function render($exception): Output {
         $base_dir = dirname(__DIR__).'/UserInterface/';
+        $response = response()->allowCors();
         if (!app()->isDebug()) {
-            return view($base_dir.'Error/404.php');
+            return $response->html(view($base_dir.'Error/404.php'));
         }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
-        if (app('request')->wantsJson()) {
-            return Json::encode($info);
+        if (request()->wantsJson() || request()->isJson()) {
+            return $response->json($info);
         }
-        return (new ViewFactory())->render($base_dir.'Home/index.php', compact('info', 'exceptions'));
+        return $response->html(view($base_dir.'Home/index.php', compact('info', 'exceptions')));
     }
 
     protected function getInfo($exception) {
