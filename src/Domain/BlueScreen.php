@@ -12,7 +12,7 @@ class BlueScreen extends BaseBox {
 
     public function render($exception): Output {
         $base_dir = dirname(__DIR__).'/UserInterface/';
-        $response = response()->allowCors();
+        $response = response()->statusCode(400)->allowCors();
         if (!app()->isDebug()) {
             return $response->html(view($base_dir.'Error/404.php'));
         }
