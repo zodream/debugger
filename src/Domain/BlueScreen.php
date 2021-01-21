@@ -13,15 +13,16 @@ class BlueScreen extends BaseBox {
     public function render($exception): Output {
         $base_dir = dirname(__DIR__).'/UserInterface/';
         $response = response()->statusCode(400)->allowCors();
+        $view = new ViewFactory();
         if (!app()->isDebug()) {
-            return $response->html(view($base_dir.'Error/404.php'));
+            return $response->html($view->render($base_dir.'Error/404.php'));
         }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
         if (request()->wantsJson() || request()->isJson()) {
             return $response->json($info);
         }
-        return $response->html(view($base_dir.'Home/index.php', compact('info', 'exceptions')));
+        return $response->html($view->render($base_dir.'Home/index.php', compact('info', 'exceptions')));
     }
 
     protected function getInfo($exception) {
