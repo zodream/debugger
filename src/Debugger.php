@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Zodream\Debugger;
 
 use Throwable;
@@ -14,35 +15,35 @@ class Debugger {
 
     const COOKIE_SECRET = 'zd-debugger';
 
-    protected $isDebug = false;
+    protected bool $isDebug = false;
 
-    protected $showBar = true;
+    protected bool $showBar = true;
 
     /**
      * @var Bar
      */
     protected $bar;
 
-    protected $showFireLogger = true;
+    protected bool $showFireLogger = true;
 
-    protected $booted = false;
+    protected bool $booted = false;
 
-    protected $maxLength = 150;
+    protected int $maxLength = 150;
 
-    protected $maxDepth = 3;
+    protected int $maxDepth = 3;
 
-    protected $showLocation = false;
+    protected bool $showLocation = false;
 
-    protected $reserved;
+    protected bool $reserved = false;
 
     protected $time;
 
-    protected $obLevel;
+    protected int $obLevel;
 
-    protected $cpuUsage;
+    protected ?array $cpuUsage;
 
     public function __construct() {
-        $this->reserved = str_repeat('t', 30000);
+        $this->reserved = true;
         $this->time = isset($_SERVER['REQUEST_TIME_FLOAT']) ? $_SERVER['REQUEST_TIME_FLOAT'] : microtime(true);
         $this->obLevel = ob_get_level();
         $this->isDebug = app()->isDebug();
@@ -164,7 +165,7 @@ class Debugger {
         if (!$this->reserved) {
             return;
         }
-        $this->reserved = null;
+        $this->reserved = false;
         $error = error_get_last();
         if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE, E_RECOVERABLE_ERROR, E_USER_ERROR], true)) {
 //            self::exceptionHandler(
@@ -191,7 +192,7 @@ class Debugger {
         if (!$this->reserved && $exit) {
             return;
         }
-        $this->reserved = null;
+        $this->reserved = false;
         if (request()->isCli()) {
             $this->renderForConsole(app(Output::class), $exception);
             return;
