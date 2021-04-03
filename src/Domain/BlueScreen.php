@@ -5,6 +5,7 @@ namespace Zodream\Debugger\Domain;
 use Zodream\Disk\FileSystem;
 use Zodream\Helpers\Html;
 use Zodream\Helpers\Json;
+use Zodream\Helpers\Str;
 use Zodream\Infrastructure\Contracts\Http\Output;
 use Zodream\Template\ViewFactory;
 
@@ -15,7 +16,7 @@ class BlueScreen extends BaseBox {
         $response = response()->statusCode(400)->allowCors();
         $view = new ViewFactory();
         if (!app()->isDebug()) {
-            return $response->html($view->render($base_dir.'Error/404.php'));
+            return $this->renderNotFound($response, $exception, $view, $base_dir. 'Error/404.php');
         }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
@@ -23,6 +24,14 @@ class BlueScreen extends BaseBox {
             return $response->json($info);
         }
         return $response->html($view->render($base_dir.'Home/index.php', compact('info', 'exceptions')));
+    }
+
+    protected function renderNotFound(Output $output, $exception, ViewFactory $viewFactory, string $viewFile) {
+        $response = Str::call(config('route.not-found'), [$exception], false);
+        if ($response) {
+            return $response;
+        }
+        return $output->html($viewFactory->render($viewFile));
     }
 
     protected function getInfo($exception) {

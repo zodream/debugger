@@ -9,8 +9,9 @@ use Zodream\Debugger\Domain\BlueScreen;
 use Zodream\Service\Console\Output;
 use Zodream\Template\Events\ViewCompiled;
 use Zodream\Template\Events\ViewRendered;
+use Zodream\Infrastructure\Contracts\Debugger as DebuggerInterface;
 
-class Debugger {
+class Debugger implements DebuggerInterface {
 
 
     const COOKIE_SECRET = 'zd-debugger';

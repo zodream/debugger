@@ -7,7 +7,7 @@ namespace Zodream\Debugger;
  * Time: 19:22
  */
 
-use Zodream\Infrastructure\Error\NotFoundHttpException;
+use Zodream\Route\Exception\NotFoundHttpException;
 use Zodream\Route\Controller\Module as BaseModule;
 
 class Module extends BaseModule {
