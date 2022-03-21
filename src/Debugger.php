@@ -23,7 +23,7 @@ class Debugger implements DebuggerInterface {
     /**
      * @var Bar
      */
-    protected $bar;
+    protected mixed $bar;
 
     protected bool $showFireLogger = true;
 
@@ -37,7 +37,7 @@ class Debugger implements DebuggerInterface {
 
     protected bool $reserved = false;
 
-    protected $time;
+    protected float $time;
 
     protected int $obLevel;
 
@@ -45,7 +45,7 @@ class Debugger implements DebuggerInterface {
 
     public function __construct() {
         $this->reserved = true;
-        $this->time = isset($_SERVER['REQUEST_TIME_FLOAT']) ? $_SERVER['REQUEST_TIME_FLOAT'] : microtime(true);
+        $this->time = $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true);
         $this->obLevel = ob_get_level();
         $this->isDebug = app()->isDebug();
         $this->cpuUsage = $this->isDebug && function_exists('getrusage') ? getrusage() : null;
@@ -60,9 +60,9 @@ class Debugger implements DebuggerInterface {
     }
 
     /**
-     * @return integer
+     * @return float
      */
-    public function getTime() {
+    public function getTime(): float {
         return $this->time;
     }
 
@@ -124,13 +124,14 @@ class Debugger implements DebuggerInterface {
         if (!$this->showBar || !$this->isDebug) {
             return;
         }
-        event()->listen(QueryExecuted::class, function (QueryExecuted $executed) {
+        $event = event();
+        $event->listen(QueryExecuted::class, function (QueryExecuted $executed) {
             $this->getBar()->appendQuery($executed->sql, $executed->bindings, $executed->time);
         });
-        event()->listen(ViewCompiled::class, function (ViewCompiled $compiled) {
+        $event->listen(ViewCompiled::class, function (ViewCompiled $compiled) {
             $this->getBar()->appendView($compiled->file, $compiled->time, 'Compiled');
         });
-        event()->listen(ViewRendered::class, function (ViewRendered $rendered) {
+        $event->listen(ViewRendered::class, function (ViewRendered $rendered) {
             $this->getBar()->appendView($rendered->file, $rendered->time);
         });
     }
@@ -142,7 +143,7 @@ class Debugger implements DebuggerInterface {
             || request()->isCli()) {
             return;
         }
-        if (!app()->isDebug()) {
+        if (!$this->isDebug) {
             return;
         }
     }
@@ -217,7 +218,7 @@ class Debugger implements DebuggerInterface {
      * @throws \Throwable
      * @internal
      */
-    public function errorHandler($severity, $message, $file, $line, $context = []) {
+    public function errorHandler($severity, $message, $file, $line, array $context = []) {
         if ($severity === E_RECOVERABLE_ERROR || $severity === E_USER_ERROR) {
             $e = new \ErrorException($message, 0, $severity, $file, $line);
             $e->context = $context;
