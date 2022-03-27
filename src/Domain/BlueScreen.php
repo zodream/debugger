@@ -85,13 +85,15 @@ class BlueScreen extends BaseBox {
         if (!isset($trace['args'])) {
             return [];
         }
+        $params = [];
         try {
-            $r = isset($trace['class'])
-                ? new \ReflectionMethod($trace['class'], $trace['function'])
-                : new \ReflectionFunction($trace['function']);
-            $params = $r->getParameters();
+            if (!str_contains($trace['function'], '{closure}')) {
+                $r = isset($trace['class'])
+                    ? new \ReflectionMethod($trace['class'], $trace['function'])
+                    : new \ReflectionFunction($trace['function']);
+                $params = $r->getParameters();
+            }
         } catch (\Exception $e) {
-            $params = [];
         }
         $data = [];
         foreach ($trace['args'] as $key => $value) {
