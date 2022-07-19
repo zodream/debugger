@@ -81,11 +81,12 @@ class BlueScreen extends BaseBox {
     }
 
 
-    protected function formatParameter($trace) {
+    protected function formatParameter(array $trace) {
         if (!isset($trace['args'])) {
             return [];
         }
         $params = [];
+        $data = [];
         try {
             if (!str_contains($trace['function'], '{closure}')) {
                 $r = isset($trace['class'])
@@ -95,10 +96,9 @@ class BlueScreen extends BaseBox {
             }
         } catch (\Exception $e) {
         }
-        $data = [];
         foreach ($trace['args'] as $key => $value) {
             $name = isset($params[$key]) ? '$' . $params[$key]->name : "#$key";
-            $data[$name] = Html::text(print_r($value, true));
+            $data[$name] = $value instanceof \Closure ? '{Closure}' : Html::text(print_r($value, true));
         }
         return $data;
     }
