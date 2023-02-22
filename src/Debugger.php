@@ -126,12 +126,21 @@ class Debugger implements DebuggerInterface {
         }
         $event = event();
         $event->listen(QueryExecuted::class, function (QueryExecuted $executed) {
+            if (!$this->showBar) {
+                return;
+            }
             $this->getBar()->appendQuery($executed->sql, $executed->bindings, $executed->time);
         });
         $event->listen(ViewCompiled::class, function (ViewCompiled $compiled) {
+            if (!$this->showBar) {
+                return;
+            }
             $this->getBar()->appendView($compiled->file, $compiled->time, 'Compiled');
         });
         $event->listen(ViewRendered::class, function (ViewRendered $rendered) {
+            if (!$this->showBar) {
+                return;
+            }
             $this->getBar()->appendView($rendered->file, $rendered->time);
         });
     }
@@ -223,6 +232,9 @@ class Debugger implements DebuggerInterface {
             $e = new \ErrorException($message, 0, $severity, $file, $line);
             $e->context = $context;
             $this->exceptionHandler($e);
+            return;
+        }
+        if (!$this->showBar) {
             return;
         }
         $this->getBar()->appendError($severity, $message, $file, $line);
