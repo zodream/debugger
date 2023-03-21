@@ -1,3 +1,5 @@
+(window.jQuery || document.write('<script src="/assets/js/jquery.min.js"><\/script>');
+
 interface DebuggerHeader {
     name: string,
     message: string
