@@ -254,10 +254,10 @@ class Debugger implements DebuggerInterface {
     }
 
     public function renderForConsole(Output $output, Throwable $e) {
-        $output->writeln('');
-        $output->writeln(sprintf('%s: %d', get_class($e), $e->getCode()));
+        $output->writeLine('');
+        $output->writeLine(sprintf('%s: %d', get_class($e), $e->getCode()));
         do {
-            $output->writeln(sprintf('%s in %s: %d', $e->getMessage(), $e->getFile(), $e->getLine()));
+            $output->writeLine(sprintf('%s in %s: %d', $e->getMessage(), $e->getFile(), $e->getLine()));
         } while ($e = $e->getPrevious());
     }
 
