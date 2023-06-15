@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Zodream\Debugger\Domain;
 
 
@@ -17,19 +18,19 @@ class Log {
 
     const COLOR_WHITE = "\e[97m";
 
-    public static function error($message) {
+    public static function error(mixed $message) {
         static::info($message, self::COLOR_RED);
     }
 
-    public static function warning($message) {
+    public static function warning(mixed $message) {
         static::info($message, self::COLOR_ORANGE);
     }
 
-    public static function notice($message) {
+    public static function notice(mixed $message) {
         static::info($message, self::COLOR_WHITE);
     }
 
-    public static function info($message, $color = null) {
+    public static function info(mixed $message, ?string $color = null) {
         if (!app('request')->isCli()) {
             return;
         }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Zodream\Debugger\Domain;
 
 
@@ -40,6 +41,6 @@ abstract class BaseBox {
             E_DEPRECATED => 'Deprecated',
             E_USER_DEPRECATED => 'User Deprecated',
         ];
-        return isset($types[$type]) ? $types[$type] : 'Unknown error';
+        return $types[$type] ?? 'Unknown error';
     }
 }

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Zodream\Debugger\Domain\Debug;
 
 use Symfony\Component\VarDumper\Dumper\HtmlDumper as SymfonyHtmlDumper;

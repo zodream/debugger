@@ -2,6 +2,7 @@
 namespace Zodream\Debugger\Domain;
 
 
+use Zodream\Debugger\Domain\Debug\Dumper;
 use Zodream\Disk\FileSystem;
 use Zodream\Helpers\Html;
 use Zodream\Helpers\Json;
@@ -18,11 +19,11 @@ class BlueScreen extends BaseBox {
         if (!app()->isDebug()) {
             return $this->renderNotFound($response, $exception, $view, $base_dir. 'Error/404.php');
         }
+        if (request()->wantsJson() || request()->isJson()) {
+            return $response->json(Dumper::dumpException($exception));
+        }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
-        if (request()->wantsJson() || request()->isJson()) {
-            return $response->json($info);
-        }
         return $response->html($view->render($base_dir.'Home/index.php', compact('info', 'exceptions')));
     }
 
@@ -50,13 +51,13 @@ class BlueScreen extends BaseBox {
     }
 
     protected function getRelative($file) {
-        return FileSystem::relativePath(app_path(), $file);
+        return FileSystem::relativePath((string)app_path(), (string)$file);
     }
 
     protected function formatTrace(array $traces) {
         foreach ($traces as &$trace) {
             $trace['args'] = $this->formatParameter($trace);
-            if (isset($trace['file']) && !empty($trace['file'])) {
+            if (!empty($trace['file'])) {
                 $trace['source'] = $this->formatSource($trace['file'], $trace['line']);
                 $trace['file'] = $this->getRelative($trace['file']);
             }

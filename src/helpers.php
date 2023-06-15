@@ -10,7 +10,7 @@ if (! function_exists('dd')) {
      * @param  mixed  $args
      * @return void
      */
-    function dd(...$args) {
+    function dd(...$args): void {
         (new Dumper())->dumpResponse(...$args);
     }
 }
@@ -22,7 +22,7 @@ if (! function_exists('dr')) {
      * @param  mixed  $args
      * @return void
      */
-    function dr(...$args) {
+    function dr(...$args): void {
         (new Dumper())->dumpResponse(...$args);
     }
 }

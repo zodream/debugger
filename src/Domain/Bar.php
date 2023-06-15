@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Zodream\Debugger\Domain;
 
 use Zodream\Disk\FileSystem;
@@ -6,7 +7,7 @@ use Zodream\Infrastructure\Support\Html;
 
 class Bar extends BaseBox {
 
-    protected $data = [
+    protected array $data = [
         'Queries' => [],
         'Views' => [],
         'Errors' => [],
@@ -18,7 +19,8 @@ class Bar extends BaseBox {
     }
 
     public function appendView($file, $time, $type = 'Rendered') {
-        $this->data['Views'][] = sprintf('[%s] %s : %sms', $type, FileSystem::relativePath(app_path(), $file), $time);
+        $this->data['Views'][] = sprintf('[%s] %s : %sms', $type,
+            FileSystem::relativePath((string)app_path(), (string)$file), $time);
         return $this;
     }
 
@@ -105,13 +107,13 @@ HTML;
             'OPcache' => $opcache ? round(count($cachedFiles) * 100 / count(get_included_files())) . '% cached' : null,
             'Classes + interfaces + traits' => $this->getUseClassCount(get_declared_classes()) . ' + '
                 . $this->getUseClassCount(get_declared_interfaces()) . ' + ' . $this->getUseClassCount(get_declared_traits()),
-            'Your IP' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
-            'Server IP' => isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : null,
+            'Your IP' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'Server IP' => $_SERVER['SERVER_ADDR'] ?? null,
             'HTTP method / response code' => isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] . ' / ' . http_response_code() : null,
             'PHP' => PHP_VERSION,
             'Xdebug' => extension_loaded('xdebug') ? phpversion('xdebug') : null,
             'Zodream' => app()->version(),
-            'Server' => isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : null,
+            'Server' => $_SERVER['SERVER_SOFTWARE'] ?? null,
         ];
         return array_filter($info);
     }

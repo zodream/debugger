@@ -79,7 +79,7 @@ class Timer {
      * @param array $params
      * @throws Exception
      */
-    public function stopMeasure(string $name, $params = array())
+    public function stopMeasure(string $name, array $params = array())
     {
         $end = Time::millisecond();
         if (!$this->hasStartedMeasure($name)) {
@@ -104,7 +104,8 @@ class Timer {
      * @param array $params
      * @param string|null $collector
      */
-    public function addMeasure(string $label, float $start, float $end, $params = array(), $collector = null)
+    public function addMeasure(string $label, float $start, float $end, array $params = array(),
+                               $collector = null)
     {
         $this->measures[] = array(
             'label' => $label,
