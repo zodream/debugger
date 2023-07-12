@@ -1,4 +1,4 @@
-(window.jQuery || document.write('<script src="/assets/js/jquery.min.js"><\/script>');
+(window.jQuery || document.write('<script src="/assets/js/jquery.min.js"><\/script>'));
 
 interface DebuggerHeader {
     name: string,
@@ -10,7 +10,7 @@ class Debugger {
      * bar
      */
     public static bar(time: string, errors: number, info: any): JQuery {
-        if ($.cookie && $.cookie('debugger-bar') == 1) {
+        if (window.sessionStorage.getItem('debugger-bar') === '1') {
             return;
         }
         let box = Debugger.createElement('bar');
@@ -24,9 +24,7 @@ class Debugger {
             $(this).closest('.debugger-bar').toggleClass('expanded');
         }).on('click', '.bar-title .fa-close', function() {
             $(this).closest('.debugger-bar').remove();
-            if ($.cookie) {
-                $.cookie('debugger-bar', 1);
-            }
+            window.sessionStorage.setItem('debugger-bar', '1');
         });
         return box;
     }
