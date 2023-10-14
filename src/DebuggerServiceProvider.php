@@ -8,8 +8,7 @@ use Zodream\Infrastructure\Contracts\Debugger as DebuggerInterface;
 
 class DebuggerServiceProvider extends ServiceProvider {
 
-    public function register()
-    {
+    public function register(): void {
         $this->app->singletonIf(DebuggerInterface::class, Debugger::class);
         $this->app->singletonIf(Timer::class);
         $this->app->alias(DebuggerInterface::class, 'debugger');
