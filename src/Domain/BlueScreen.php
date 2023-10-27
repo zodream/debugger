@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Zodream\Debugger\Domain;
 
 
@@ -8,6 +9,7 @@ use Zodream\Helpers\Html;
 use Zodream\Helpers\Json;
 use Zodream\Helpers\Str;
 use Zodream\Infrastructure\Contracts\Http\Output;
+use Zodream\Infrastructure\Error\TemplateException;
 use Zodream\Template\ViewFactory;
 
 class BlueScreen extends BaseBox {
@@ -22,9 +24,31 @@ class BlueScreen extends BaseBox {
         if (request()->wantsJson() || request()->isJson()) {
             return $response->json(Dumper::dumpException($exception));
         }
+        if ($exception instanceof TemplateException) {
+            return $response->html(
+                $this->renderTemplateException($exception)
+            );
+        }
         $info = $this->getInfo($exception);
         $exceptions = $this->getAllException($exception);
         return $response->html($view->render($base_dir.'Home/index.php', compact('info', 'exceptions')));
+    }
+
+    protected function renderTemplateException(TemplateException $ex): string {
+        $sourceFile = $ex->getSourceFile();
+        $compiledFile = $ex->getCompiledFile();
+        $value = '';
+        if ($sourceFile === $compiledFile) {
+            $value = sprintf('<b>%s</b> -&gt; ', $sourceFile);
+        }
+        return sprintf(
+            '%s: <br><h1>%s</h1><br> %s%s: %d',
+            $this->getClass($ex),
+            $ex->getMessage(),
+            $value,
+            $ex->getCompiledFile(),
+            $ex->getLine()
+        );
     }
 
     protected function renderNotFound(Output $output, $exception, ViewFactory $viewFactory, string $viewFile) {
