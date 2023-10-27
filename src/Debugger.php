@@ -142,6 +142,9 @@ class Debugger implements DebuggerInterface {
                 return;
             }
             $this->getBar()->appendView($rendered->file, $rendered->time);
+            if ($rendered->file !== $rendered->compiledFile) {
+                $this->getBar()->appendView($rendered->compiledFile, $rendered->time, 'Temporary');
+            }
         });
     }
 

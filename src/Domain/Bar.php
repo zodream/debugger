@@ -13,24 +13,24 @@ class Bar extends BaseBox {
         'Errors' => [],
     ];
 
-    public function appendQuery($sql, $bindings, $time) {
+    public function appendQuery(string $sql, array $bindings, float $time): static {
         $this->data['Queries'][] = sprintf('[%sms] %s', $time, $sql);
         return $this;
     }
 
-    public function appendView($file, $time, $type = 'Rendered') {
+    public function appendView(mixed $file, float $time, string $type = 'Rendered'): static {
         $this->data['Views'][] = sprintf('[%s] %s : %sms', $type,
             FileSystem::relativePath((string)app_path(), (string)$file), $time);
         return $this;
     }
 
-    public function appendError($severity, $message, $file, $line) {
+    public function appendError($severity, $message, $file, $line): static {
         $message = 'PHP ' . $this->errorTypeToString($severity) . ': '.$message;
         $this->data['Errors'][] = sprintf('%s[%s]: %s', $file, $line, $message);
         return $this;
     }
 
-    public function render() {
+    public function render(): void {
         if (app('request')->isAjax()
             || app('request')->isPjax()
             || app('request')->isPreFlight()
@@ -76,7 +76,7 @@ HTML;
 
     }
 
-    protected function getCpuUsage($time) {
+    protected function getCpuUsage(float $time): array {
         $data = $this->debugger->getUsedCpuUsage();
         return [
             -round(($data['ru_utime.tv_sec'] * 1e6 + $data['ru_utime.tv_usec']) / $time / 10000),
@@ -84,17 +84,17 @@ HTML;
         ];
     }
 
-    protected function getUseClassCount($list) {
+    protected function getUseClassCount(array $list): int {
         return count(array_filter($list, function ($name) {
             return (new \ReflectionClass($name))->isUserDefined();
         }));
     }
 
-    protected function formatTime($time) {
+    protected function formatTime(float $time): string {
         return number_format( $time * 1000, 1, '.', ' ') . ' ms';
     }
 
-    protected function getProperties() {
+    protected function getProperties(): array {
         $time = $this->debugger->getUsedTime();
         list($userUsage, $systemUsage) = $this->getCpuUsage($time);
         $opcache = function_exists('opcache_get_status') ? @opcache_get_status() : null; // @ can be restricted
