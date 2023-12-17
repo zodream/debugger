@@ -6,7 +6,7 @@ $css = $this->assetFile('@debugger.css')->read();
 $this->registerJsFile('@jquery.min.js')
     ->registerJsFile('@debugger.min.js')
     ->registerCssFile('@font-awesome.min.css')
-    ->registerCssFile('@zodream.css')
+    ->registerCssFile('@zodream.min.css')
     ->registerCss($css);
 ?>
 <!DOCTYPE html>

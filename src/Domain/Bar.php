@@ -56,7 +56,7 @@ class Bar extends BaseBox {
         $error_count = count($this->data['Errors']);
         $html = '';
         foreach ([
-            '@debugger.css'
+            '@debugger.min.css'
                  ] as $file) {
             $html .= Html::link(view()->getAssetUri($file));
         }
