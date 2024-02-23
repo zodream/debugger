@@ -1,7 +1,7 @@
 <?php
 /** @var $this \Zodream\Template\View */
 
-$css = $this->assetFile('@debugger.css')->read();
+$css = $this->assetFile('@debugger.min.css')->read();
 
 $this->registerJsFile('@jquery.min.js')
     ->registerJsFile('@debugger.min.js')
