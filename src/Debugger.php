@@ -41,7 +41,7 @@ class Debugger implements DebuggerInterface {
 
     protected int $obLevel;
 
-    protected ?array $cpuUsage;
+    protected array|null $cpuUsage;
 
     public function __construct() {
         $this->reserved = true;

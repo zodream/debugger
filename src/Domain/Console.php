@@ -29,7 +29,7 @@ class Console {
         static::info($message, self::COLOR_WHITE);
     }
 
-    public static function info(mixed $message, ?string $color = null): void {
+    public static function info(mixed $message, string|null $color = null): void {
         if (!app('request')->isCli()) {
             return;
         }
