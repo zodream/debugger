@@ -37,7 +37,7 @@ class BlueScreen extends BaseBox {
         $sourceFile = $ex->getSourceFile();
         $compiledFile = $ex->getCompiledFile();
         $value = '';
-        if ($sourceFile === $compiledFile) {
+        if ($sourceFile !== $compiledFile) {
             $value = sprintf('<b>%s</b> -&gt; ', $sourceFile);
         }
         return sprintf(

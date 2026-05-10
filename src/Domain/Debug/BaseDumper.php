@@ -4,6 +4,7 @@ namespace Zodream\Debugger\Domain\Debug;
 
 use Throwable;
 use Zodream\Infrastructure\Support\CodeBuilder;
+use Zodream\Database\Model\Model;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionProperty;
@@ -154,6 +155,10 @@ abstract class BaseDumper implements IDumper {
     }
 
     private function writeClass(CodeBuilder $builder, mixed $value): void {
+        if ($value instanceof Model) {
+            $this->writeEntity($builder, $value);
+            return;
+        }
         $ref = new ReflectionClass($value);
         if ($ref->isEnum()) {
             $this->writeEnum($builder, $value);
@@ -175,6 +180,20 @@ abstract class BaseDumper implements IDumper {
             $this->writeProperty($builder, $value, $prop);
             $first = false;
         }
+        $builder->appendOutdentLine()->append('}');
+    }
+
+    private function writeEntity(CodeBuilder $builder, Model $value): void {
+        $ref = new ReflectionClass($value);
+        $this->writeWithMark($builder, 'index', get_class($value));
+        $builder->append(' {');
+        $property = $ref->getProperty('__attributes');
+        if (empty($property)) {
+            $builder->append('}');
+            return;
+        }
+        $builder->appendIndentLine();
+        $this->writeProperty($builder, $value, $property);
         $builder->appendOutdentLine()->append('}');
     }
 
