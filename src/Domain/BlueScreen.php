@@ -6,7 +6,6 @@ namespace Zodream\Debugger\Domain;
 use Zodream\Debugger\Domain\Debug\Dumper;
 use Zodream\Disk\FileSystem;
 use Zodream\Helpers\Html;
-use Zodream\Helpers\Json;
 use Zodream\Helpers\Str;
 use Zodream\Infrastructure\Contracts\Http\Output;
 use Zodream\Infrastructure\Error\TemplateException;
@@ -14,7 +13,7 @@ use Zodream\Template\ViewFactory;
 
 class BlueScreen extends BaseBox {
 
-    public function render($exception): Output {
+    public function render(mixed $exception): Output {
         $base_dir = dirname(__DIR__).'/UserInterface/';
         $response = response()->statusCode(400)->allowCors();
         $view = new ViewFactory();
@@ -51,7 +50,7 @@ class BlueScreen extends BaseBox {
         );
     }
 
-    protected function renderNotFound(Output $output, $exception, ViewFactory $viewFactory, string $viewFile) {
+    protected function renderNotFound(Output $output, mixed $exception, ViewFactory $viewFactory, string $viewFile) {
         $response = Str::call(config('route.not-found'), [$exception], false);
         if ($response) {
             return $response;
@@ -59,11 +58,11 @@ class BlueScreen extends BaseBox {
         return $output->html($viewFactory->render($viewFile));
     }
 
-    protected function getInfo($exception) {
+    protected function getInfo(mixed $exception): array {
         return $this->formatException($exception);
     }
 
-    protected function formatException($exception) {
+    protected function formatException(mixed $exception): array {
         return [
             'name' => $exception instanceof \ErrorException
                 ? $this->errorTypeToString($exception->getSeverity())
@@ -74,11 +73,11 @@ class BlueScreen extends BaseBox {
         ];
     }
 
-    protected function getRelative($file) {
+    protected function getRelative(mixed $file): string {
         return FileSystem::relativePath((string)app_path(), (string)$file);
     }
 
-    protected function formatTrace(array $traces) {
+    protected function formatTrace(array $traces): array {
         foreach ($traces as &$trace) {
             $trace['args'] = $this->formatParameter($trace);
             if (!empty($trace['file'])) {
@@ -89,11 +88,11 @@ class BlueScreen extends BaseBox {
         return $traces;
     }
 
-    protected function formatSource($file, $line) {
+    protected function formatSource(string $file, int $line): string {
         return $this->highlightFile($file, $line);
     }
 
-    protected function getAllException($exception) {
+    protected function getAllException(mixed $exception): array {
         $data = [];
         do {
             $info = $this->formatException($exception);
@@ -106,7 +105,7 @@ class BlueScreen extends BaseBox {
     }
 
 
-    protected function formatParameter(array $trace) {
+    protected function formatParameter(array $trace): array {
         if (!isset($trace['args'])) {
             return [];
         }
@@ -123,24 +122,24 @@ class BlueScreen extends BaseBox {
         }
         foreach ($trace['args'] as $key => $value) {
             $name = isset($params[$key]) ? '$' . $params[$key]->name : "#$key";
-            $data[$name] = $value instanceof \Closure ? '{Closure}' : Html::text(print_r($value, true));
+            $data[$name] = Html::text(Dumper::print($value));
         }
         return $data;
     }
 
 
-
-    protected function getLastError($exception) {
+    protected function getLastError(mixed $exception) {
         $lastError = $exception instanceof \ErrorException || $exception instanceof \Error ? null : error_get_last();
+        return $lastError;
     }
 
-    protected function getClass($obj) {
+    protected function getClass(mixed $obj): string {
         return explode("\x00", get_class($obj))[0];
     }
 
 
 
-    public function highlightFile($file, $line, $lines = 15) {
+    public function highlightFile(string $file, int $line, int $lines = 15) {
         $source = @file_get_contents($file); // @ file may not exist
         if ($source) {
             $source = $this->highlightPhp($source, $line, $lines);
@@ -157,7 +156,7 @@ class BlueScreen extends BaseBox {
      * @param  int  $lines
      * @return string
      */
-    public function highlightPhp($source, $line, $lines = 15) {
+    public function highlightPhp(string $source, int $line, int $lines = 15): string {
         if (function_exists('ini_set')) {
             ini_set('highlight.comment', '#998; font-style: italic');
             ini_set('highlight.default', '#000');
@@ -183,7 +182,7 @@ class BlueScreen extends BaseBox {
      * @param int $lines
      * @return string
      */
-    public function highlightLine($html, $line, $lines = 15) {
+    public function highlightLine(string $html, int $line, int $lines = 15): string {
         $source = explode("\n", "\n" . str_replace("\r\n", "\n", $html));
         $out = '';
         $spans = 1;

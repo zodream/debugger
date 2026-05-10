@@ -23,7 +23,7 @@ class Debugger implements DebuggerInterface {
     /**
      * @var Bar
      */
-    protected mixed $bar;
+    protected mixed $bar = null;
 
     protected bool $showFireLogger = true;
 

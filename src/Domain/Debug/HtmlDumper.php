@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace Zodream\Debugger\Domain\Debug;
 
-use Symfony\Component\VarDumper\Dumper\HtmlDumper as SymfonyHtmlDumper;
+use Zodream\Infrastructure\Support\CodeBuilder;
 
-class HtmlDumper extends SymfonyHtmlDumper {
+class HtmlDumper extends BaseDumper {
     /**
      * Colour definitions for output.
      *
@@ -25,4 +25,18 @@ class HtmlDumper extends SymfonyHtmlDumper {
         'key' => 'color:#df5000',
         'index' => 'color:#a71d5d',
     ];
+
+
+    public function write(CodeBuilder $builder, mixed $value): void {
+        $builder->append('<pre class="zre-dump-container">');
+        parent::write($builder, $value);
+        $builder->append('</pre>');
+    }
+
+    protected function getColor(string $key): string {
+        return isset($this->styles[$key]) ? $this->styles[$key] : '';
+    }
+    protected function writeWithColor(CodeBuilder $builder, string $color, string $text): void {
+        $builder->append('<span style="'. $color .'">')->append($text)->append('</span>');
+    }
 }
