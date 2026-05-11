@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Zodream\Debugger\Domain\Debug;
 
 use Zodream\Infrastructure\Support\CodeBuilder;
+use Zodream\Helpers\Html;
 
 class HtmlDumper extends BaseDumper {
     /**
@@ -26,6 +27,9 @@ class HtmlDumper extends BaseDumper {
         'index' => 'color:#a71d5d',
     ];
 
+    protected function encode(string $text): string {
+        return Html::text($text);
+    }
 
     public function write(CodeBuilder $builder, mixed $value): void {
         $builder->append('<pre class="zre-dump-container">');

@@ -30,6 +30,12 @@ abstract class BaseDumper implements IDumper {
 
     protected abstract function getColor(string $mark): string;
     protected abstract function writeWithColor(CodeBuilder $builder, string $color, string $text): void;
+    /**
+     * 转义一些文字
+     */
+    protected function encode(string $text): string {
+        return $text;
+    }
     protected function writeWithMark(CodeBuilder $builder, string $mark, string $text): void {
         $this->writeWithColor($builder, $this->getColor($mark), $text);
     }
@@ -96,7 +102,7 @@ abstract class BaseDumper implements IDumper {
     }
 
     private function writeString(CodeBuilder $builder, string $value): void {
-        $this->writeWithMark($builder, 'str', var_export($value, true));
+        $this->writeWithMark($builder, 'str', var_export($this->encode($value), true));
     }
 
 
