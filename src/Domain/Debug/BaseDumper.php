@@ -172,7 +172,7 @@ abstract class BaseDumper implements IDumper {
         }
         $this->writeWithMark($builder, 'index', get_class($value));
         $builder->append(' {');
-        $properties = $ref->getProperties();
+        $properties = $this->getProperties($ref);
         if (count($properties) === 0) {
             $builder->append('}');
             return;
@@ -187,6 +187,21 @@ abstract class BaseDumper implements IDumper {
             $first = false;
         }
         $builder->appendOutdentLine()->append('}');
+    }
+    
+    /**
+     * @return ReflectionProperty[]
+     */
+    private function getProperties(ReflectionClass $ref): array {
+        $res = [];
+        $filter = null;
+        do {
+            foreach ($ref->getProperties($filter) as $property) {
+                $res[] = $property;
+            }
+            $filter = ReflectionProperty::IS_PRIVATE;
+        } while ($ref = $ref->getParentClass());
+        return $res;
     }
 
     private function writeEntity(CodeBuilder $builder, Model $value): void {
