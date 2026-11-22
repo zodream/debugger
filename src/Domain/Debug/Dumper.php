@@ -24,7 +24,7 @@ class Dumper {
         if ($isCli) {
             $response->str((string)$builder);
         } else {
-            $response->html((string)$builder);
+            $response->allowCors()->html((string)$builder);
         }
         $builder->close();
         $response->send();
