@@ -52,7 +52,6 @@ abstract class BaseDumper implements IDumper {
                 $this->writeString($builder, $value);
                 break;
             case is_int($value):
-            case is_double($value):
             case is_float($value):
                 $this->writeNumeric($builder, $value);
                 break;

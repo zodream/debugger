@@ -211,7 +211,7 @@ class Debugger implements DebuggerInterface {
             $this->renderForConsole(app(Output::class), $exception);
             return;
         }
-        logger()->error($exception->getMessage());
+        logger()->error($exception->getMessage(), ['exception' => $exception]);
         (new BlueScreen($this))->render($exception)->send();
         if ($exit) {
             exit(255);
