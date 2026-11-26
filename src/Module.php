@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Zodream\Debugger;
 /**
  * Created by PhpStorm.
@@ -10,7 +11,7 @@ namespace Zodream\Debugger;
 use Zodream\Route\Exception\NotFoundHttpException;
 use Zodream\Route\Controller\Module as BaseModule;
 
-class Module extends BaseModule {
+final class Module extends BaseModule {
 
     public function boot()
     {
